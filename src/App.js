@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import UserForm from "./components/UserForm";
+import UserTable from "./components/UserTable";
+import { useState } from "react";
 
-function App() {
+const App = () => {
+  const [users, setUsers] = useState([]);
+  const [editUser, setEditUser] = useState(undefined);
+  const saveUser = (user) => {
+    if (user.index === undefined) {
+      return setUsers([...users, ...[user]]);
+    }
+    setUsers((oldUsers) => {
+      return oldUsers.map((oldUser, i) => {
+        return i === user.index ? user : oldUser;
+      });
+    });
+  };
+
+  const deleteUser = (index) => {
+    const newUsers = [...users];
+    newUsers.splice(index, 1);
+    setUsers(newUsers);
+  };
+
+  const callEditUser = (index) => {
+    setEditUser({ ...users[index], index });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <UserForm save={saveUser} editUser={editUser} />
+      <UserTable users={users} delete={deleteUser} edit={callEditUser} />
     </div>
   );
-}
+};
 
 export default App;
